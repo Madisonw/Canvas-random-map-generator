@@ -30,29 +30,15 @@
 							dims = box.get("dims"),
 							oIndexObj = {pos : pos, dims : dims};
 						//ctx.fillStyle = "rgb(0,0,0,0.3)";
-						ctx.strokeRect(
+						ctx.fillRect(
 							pos.x, //x axis
 							pos.y, //y axis
 							dims.width, //width
 							dims.height, // height
 							box.opacity //opacity
 						)
-						ctx.strokeText(
-							box.id,
-							pos.x,
-							pos.y+10
-						)
-						if (!that.x_index[pos.x]) that.x_index[pos.x] = [];
-						that.x_index[pos.x].push(oIndexObj);
 						
-						if (!that.x_index[(pos.x+dims.width)]) that.x_index[(pos.x+dims.width)] = [];
-						that.x_index[(pos.x+dims.width)].push(oIndexObj);
 						
-						if (!that.y_index[pos.y]) that.y_index[pos.y] = [];
-						that.y_index[pos.y].push(oIndexObj);
-						
-						if (!that.y_index[(pos.y+dims.height)]) that.y_index[(pos.y+dims.height)] = [];
-						that.y_index[(pos.y+dims.height)].push(oIndexObj);
 					}
 				}
 			
@@ -72,11 +58,11 @@
 		defaults : {
 			canvasWidth : null,
 			canvasHeight : null,
-			minBoxHeight : 10,
-			maxBoxHeight : 65,
+			minBoxHeight : 2,
+			maxBoxHeight : 30,
 			
-			minBoxWidth : 10,
-			maxBoxWidth : 65,
+			minBoxWidth : 7,
+			maxBoxWidth : 10,
 		},
 		makeNoise : function() {
 			return Math.random();
@@ -166,9 +152,13 @@
 			canvas,
 			posgen,
 			dimgen,
-			ROOM_AMOUNT = 600,
+			ROOM_AMOUNT = 1500,
 			iRoom=1,
 			rejects=0,
+			tallest_box=0,
+			total_widths=0,
+			current_y=0,
+			current_x=0,
 			oRoom;
 		
 		idfactory = new IdGenerator();
@@ -191,17 +181,29 @@
 		
 		(function makerooms() {
 			if (iRoom>=ROOM_AMOUNT) return false;
+			
 			oRoom = new Room({
-				pos : posgen.getPos(),
+				pos : {x:current_x,y:current_y},
 				dims : dimgen.getDims(),
 				opacity : Math.random(),
 				id : idfactory.generate()
 			})
 			
+			if (oRoom.get("dims").height>tallest_box) tallest_box = oRoom.get("dims").height;
+			
+			current_x+=oRoom.get("dims").width;
+			
+			if (current_x>canvasWidth) {
+				current_x=0;
+				current_y+=tallest_box+10;
+				tallest_box=0;
+			}
+			
 			canvas.draw(oRoom);
 				
 			iRoom++;
 			
+			//setTimeout(makerooms,1);
 			makerooms();
 		}())
 	}())
