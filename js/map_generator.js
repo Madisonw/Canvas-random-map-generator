@@ -14,6 +14,7 @@
 			Room, 				// a room which can contain doors and monsters
 			Doors; 				// a child of a Room which allows passage through rooms.
 
+
 	Canvas = Backbone.Model.extend({
 		defaults : {
 			element : null,
@@ -37,7 +38,8 @@
 							dims.height, // height
 							box.opacity //opacity
 						)
-						
+					},
+					door : function(door) {
 						
 					}
 				}
@@ -203,8 +205,8 @@
 				
 			iRoom++;
 			
-			//setTimeout(makerooms,1);
-			makerooms();
+			setTimeout(makerooms,1);
+			//makerooms();
 		}())
 	}())
 }())
