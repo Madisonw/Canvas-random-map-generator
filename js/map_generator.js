@@ -60,51 +60,6 @@
 			
 			types[obj.type](obj);
 		},
-		canPlot : function(box) {
-			var resp = true,
-				that = this,
-				pos = box.get("pos"),
-				to_check = [], i,
-				dims = box.get("dims"),
-				xydim = {
-					x : "width",
-					y : "height"
-				},
-				xyswitch = {
-					x : "y",
-					y : "x"
-				};
-			
-			function checkAxis(axis) {
-				var corner = pos[axis]+dims[xydim[axis]],
-					oBounties,oBounty,b,len;
-				for (i=pos[axis];i<corner;i++) {
-					oBounties = that[axis+"_index"][i]
-					if (oBounties) {
-						for (b=0,len=oBounties.length;b<len;b++) {
-							oBounty = oBounties[b];
-							if (
-									 (
-									 	oBounty.pos[xyswitch[axis]]<pos[xyswitch[axis]] && //if the (x,y) point on this box is above or to the left
-										(oBounty.pos[xyswitch[axis]]+oBounty.dims[xydim[xyswitch[axis]]])>pos[xyswitch[axis]]
-									 ) ||
-									 (
-									 	(oBounty.pos[axis]+oBounty.dims[xydim[axis]])>pos[axis] &&
-										(oBounty.pos[xyswitch[axis]]+oBounty.dims[xydim[xyswitch[axis]]])>(pos[xyswitch[axis]])
-									 )
-								) {
-									//console.info(pos,oBounty.pos);
-									resp = false;
-									break;
-								}
-						}
-					}
-				}
-			}
-			checkAxis("x");
-			checkAxis("y");
-			return resp;
-		},
 		initialize : function(args) {
 			this.set({element : args.element});
 			this.set({ctx : this.get("element").getContext('2d')});
@@ -243,15 +198,10 @@
 				id : idfactory.generate()
 			})
 			
-			if (canvas.canPlot(oRoom)) {
-				canvas.draw(oRoom);
+			canvas.draw(oRoom);
 				
-			} else {
-				rejects++;
-			}
 			iRoom++;
 			
-			//setTimeout(makerooms,1)
 			makerooms();
 		}())
 	}())
